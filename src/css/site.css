@@ -1,0 +1,58 @@
+scoreRowContainer,
+scoreRow {
+    display: block;
+}
+
+scoreRowContainer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+diceRollContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 40%;
+    right: 20px;
+    left: 20px;
+    bottom: 0;
+}
+
+scoreRow {
+    padding: 5px;
+}
+
+die {
+    flex: 0 0 auto;
+    width: 96px;
+    height: 96px;
+    margin: 5px;
+}
+
+.die-1 {
+    background-image: url("../images/1.png");
+}
+
+.die-2 {
+    background-image: url("../images/2.png");
+}
+
+.die-3 {
+    background-image: url("../images/3.png");
+}
+
+.die-4 {
+    background-image: url("../images/4.png");
+}
+
+.die-5 {
+    background-image: url("../images/5.png");
+}
+
+.die-6 {
+    background-image: url("../images/6.png");
+}
