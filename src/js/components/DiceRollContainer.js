@@ -9,15 +9,14 @@ export default class DiceRollContainer extends Component {
 
         this.dice = [];
 
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i <= 6; i++) {
             this.addDie(i);
         }
     }
 
     addDie(value) {
         const die = new Die(this);
-
-        //die._element.classList.add(`die-${value}`);
         die.value = value;
+        this.dice.push(die);
     }
 }
