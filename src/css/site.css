@@ -13,6 +13,7 @@ scoreRowContainer {
 
 diceRollContainer {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     position: fixed;

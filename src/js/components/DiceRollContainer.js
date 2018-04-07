@@ -9,8 +9,8 @@ export default class DiceRollContainer extends Component {
 
         this.dice = [];
 
-        for (let i = 0; i <= 6; i++) {
-            this.addDie(i);
+        for (let i = 0; i < 6; i++) {
+            this.addDie(i + 1);
         }
     }
 

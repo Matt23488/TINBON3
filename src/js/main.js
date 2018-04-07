@@ -16,21 +16,23 @@ swal({
         max: 9
     },
     allowOutsideClick: false,
-    allowEscapeKey: false
+    allowEscapeKey: false,
+    grow: "fullscreen"
 }).then(numPlayersResult => {
     swal({
         type: "info",
         title: "Player 1's turn",
-        toast: true,
+        //toast: true,
         showConfirmButton: false,
-        timer: 3000
+        timer: 3000,
+        grow: "fullscreen"
     }).then(() => {
         swal({
-            toast: true,
+            //toast: true,
             confirmButtonText: "Roll Dice",
             allowOutsideClick: false,
             allowEscapeKey: false,
-            padding: "0rem"
+            grow: "fullscreen"
         });
     });
 });
