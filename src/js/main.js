@@ -6,30 +6,31 @@ const drc = new DiceRollContainer();
 
 
 // How many players dialog
-// This is currently failing
-iziToast.question({
-    message: 'How many players?',
-    timeout: false,
-    close: false,
-    rtl: false,
-    drag: false,
-    position: "center",
-    progressBar: false,
-    overlay: true,
-    inputs: [
-        "<input type='number' class='player-count-textbox' value='2' />",
-        true
-    ],
-    buttons: [
-        
-        "<button>Yes</button>",
-        function (instance, toast, button, e, inputs) {
-            console.info(instance);
-            console.info(toast);
-            console.info(button);
-            console.info(e);
-            console.info(inputs);
-        },
-        true
-    ]
+swal({
+    title: "How many players?",
+    type: "question",
+    input: "number",
+    inputValue: 2,
+    inputAttributes: {
+        min: 2,
+        max: 9
+    },
+    allowOutsideClick: false,
+    allowEscapeKey: false
+}).then(numPlayersResult => {
+    swal({
+        type: "info",
+        title: "Player 1's turn",
+        toast: true,
+        showConfirmButton: false,
+        timer: 3000
+    }).then(() => {
+        swal({
+            toast: true,
+            confirmButtonText: "Roll Dice",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            padding: "0rem"
+        });
+    });
 });

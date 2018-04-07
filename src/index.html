@@ -4,7 +4,6 @@
         <title>TINBON3 - That game what like Farkel</title>
 
         <link href="css/site.css" rel="stylesheet" />
-        <link href="../node_modules/izitoast/dist/css/iziToast.min.css" rel="stylesheet">
     </head>
     <body>
 
@@ -21,20 +20,7 @@
             <die></die>
         </template>
 
-        <!--
-            I have to think about how to do the prompts.
-        -->
-        <template id="rollPrompt">
-            <rollPrompt>
-                <button id="rollButton">Roll</button>
-            </rollPrompt>
-        </template>
-        <template id="scorePrompt">
-            <scorePrompt>
-            </scorePrompt>
-        </template>
-
-        <script src="../node_modules/izitoast/dist/js/iziToast.min.js" type="text/javascript"></script>
+        <script src="https://unpkg.com/sweetalert2@7.18.0/dist/sweetalert2.all.js"></script>
         <script type="module" src="js/main.js"></script>
     </body>
 </html>
