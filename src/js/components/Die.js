@@ -16,4 +16,16 @@ export default class Die extends Component {
     get value() {
         return this._value;
     }
+
+    roll(timeout) {
+        return new Promise(resolve => {
+            const rolling = window.setInterval(() => {
+                this.value = ~~(Math.random() * 6) + 1;
+            }, 10);
+            window.setTimeout(() => {
+                window.clearInterval(rolling);
+                resolve();
+            }, timeout);
+        });
+    }
 }

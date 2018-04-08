@@ -19,4 +19,9 @@ export default class DiceRollContainer extends Component {
         die.value = value;
         this.dice.push(die);
     }
+
+    rollRemainingDice() {
+        // TODO: This should exclude dice that have been scored this round
+        this.dice.forEach(die => die.roll(1000));
+    }
 }
