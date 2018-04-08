@@ -22,6 +22,7 @@ export default class DiceRollContainer extends Component {
 
     rollRemainingDice() {
         // TODO: This should exclude dice that have been scored this round
-        this.dice.forEach(die => die.roll(1000));
+        //this.dice.forEach(die => die.roll(1000));
+        return Promise.all(this.dice.map(die => die.roll(1000)));
     }
 }
