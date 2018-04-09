@@ -1,6 +1,5 @@
 import ScoreRowContainer from "../components/ScoreRowContainer.js";
 import DiceRollContainer from "../components/DiceRollContainer.js";
-import SequentialPromiseChain from "../utilities/SequentialPromiseChain.js";
 import Player from "./Player.js";
 
 export default class GameManager {
@@ -11,30 +10,54 @@ export default class GameManager {
         this._players = [];
     }
 
-    start() {
-        new Promise(resolve => {
-            askGameType()
-            .then(playGameSelected => {
-                askHowManyPlayers()
-                .then(numPlayers => {
-                    this._players = []; // Maybe do this at the end before starting over
-                    for (let i = 0; i < numPlayers; i++) {
-                        this._players.push(new Player(i + 1));
-                    }
-                    resolve(playGameSelected);
-                });
-            });
-        }).then(playGameSelected => {
-            const promiseChain = new SequentialPromiseChain({
-                array: this._players,
-                promiseAccessor: player => rollDicePrompt(player.playerNumber)
-                    .then(() => this._diceRoll.rollRemainingDice())
-            });
+    async start() {
+        let playGameSelected = false;
+        let numPlayers = 0;
 
-            promiseChain.executeUntil(player => player.score >= 10000);
-        });
+        async function gameLoop() {
+            for (let i = 0; i < numPlayers; i++) {
+                const player = this._players[i];
+                if (playGameSelected) {
+                    // TODO: Needs to be a loop here. Loop the rolling until
+                    //       player stops scoring or busts.
+                    await rollDicePrompt(player.playerNumber);
+                    await this._diceRoll.rollRemainingDice();
+                }
+                else {
+                    // TODO: This is just simulating each player taking 1 second on their turn.
+                    //       It needs to be replaced with real logic for keeping score. Probably in
+                    //       its own dialog, similar to how we select dice after we roll.
+                    await new Promise(resolve => {
+                        window.setTimeout(resolve, 1000);
+                    });
+                }
+            }
 
-        window.setTimeout(() => this._players[0].score = 10000, 10000);
+            if (this._players.some(player => player.score >= 10000)) {
+                console.log("End condition reached.");
+                return false
+            }
+            else {
+                return true;
+            }
+        }
+
+        async function runOneGame() {
+            this._players = [];
+            playGameSelected = await askGameType();
+            numPlayers = await askHowManyPlayers();
+            for (let i = 0; i < numPlayers; i++) {
+                this._players.push(new Player(i + 1));
+            }
+
+            // TODO: Remove this. This just makes sure the game will end when testing.
+            window.setTimeout(() => this._players[0].score = 10000, 10000);
+            while(await gameLoop.bind(this)());
+
+            return await askToPlayAgain();
+        }
+
+        while(await runOneGame.bind(this)());
     }
 }
 
@@ -58,10 +81,7 @@ function askHowManyPlayers() {
         inputAttributes: {
             min: 2,
             max: 9
-        },
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        grow: "fullscreen"
+        }
     }).then(result => Number(result.value));
 }
 
@@ -70,4 +90,15 @@ function rollDicePrompt(playerNumber) {
         title: `Player ${playerNumber}`,
         confirmButtonText: "Roll Dice"
     });
+}
+
+function askToPlayAgain() {
+    return swal({
+        title: "Play again",
+        text: "Would you like to play another game?",
+        type: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No"
+    }).then(result => result.value ? true : false);
 }
