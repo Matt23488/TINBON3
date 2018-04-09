@@ -1,5 +1,6 @@
 import ScoreRowContainer from "../components/ScoreRowContainer.js";
 import DiceRollContainer from "../components/DiceRollContainer.js";
+import SequentialPromiseChain from "../utilities/SequentialPromiseChain.js";
 import Player from "./Player.js";
 
 export default class GameManager {
@@ -24,18 +25,16 @@ export default class GameManager {
                 });
             });
         }).then(playGameSelected => {
-            // Then the game can begin. Hopefully this works haha
-            this._players.reduce((promise, currentPlayer) => {
-                if (playGameSelected) {
-                    return promise
-                    .then(() => rollDicePrompt(currentPlayer.playerNumber))
-                    .then(() => this._diceRoll.rollRemainingDice());
-                }
-                else {
-                    // TODO
-                }
-            }, Promise.resolve());
+            const promiseChain = new SequentialPromiseChain({
+                array: this._players,
+                promiseAccessor: player => rollDicePrompt(player.playerNumber)
+                    .then(() => this._diceRoll.rollRemainingDice())
+            });
+
+            promiseChain.executeUntil(player => player.score >= 10000);
         });
+
+        window.setTimeout(() => this._players[0].score = 10000, 10000);
     }
 }
 
