@@ -1,5 +1,6 @@
 import Component from "./Component.js";
 import Die from "./Die.js";
+import { containsAll } from "../utilities/arrayUtils.js";
 
 export default class DiceRollContainer extends Component {
     constructor() {
@@ -14,10 +15,42 @@ export default class DiceRollContainer extends Component {
         }
     }
 
+    _resetDice() {
+        this.dice.forEach(die => die.scored = false);
+    }
+
     addDie(value) {
         const die = new Die(this);
         die.value = value;
         this.dice.push(die);
+    }
+
+    // *findScoreMatches(scoreRules) {
+    //     //const matches = [];
+    //     const currentDice = this.dice.map(die => die.value);
+
+    //     for (validScore of scoreRules) {
+    //         // TODO: wildCards
+    //         if (containsAll.bind(validScore.dice)(currentDice)) {
+    //             // This means that the match was found.
+    //             yield validScore;
+    //         }
+    //     }
+    // }
+
+    findScoreMatches(scoreRules) {
+        const matches = [];
+        const currentDice = this.dice.map(die => die.value);
+
+        for (let validScore of scoreRules) {
+            // TODO: wildCards
+            if (containsAll(validScore.dice, currentDice)) {
+                // This means that the match was found.
+                matches.push(validScore);
+            }
+        }
+
+        return matches;
     }
 
     rollRemainingDice() {

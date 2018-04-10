@@ -10,7 +10,18 @@ export default class GameManager {
         this._players = [];
     }
 
+    /**
+     * Loads the ruleset into this._rules. It's safe to call if rules have already been loaded.
+     */
+    async loadRules() {
+        if (!this._rules) {
+            this._rules = await fetch("/src/rules.json").then(r => r.json());
+        }
+    }
+
     async start() {
+        await this.loadRules();
+
         let playGameSelected = false;
         let numPlayers = 0;
 
@@ -20,8 +31,26 @@ export default class GameManager {
                 if (playGameSelected) {
                     // TODO: Needs to be a loop here. Loop the rolling until
                     //       player stops scoring or busts.
-                    await rollDicePrompt(player.playerNumber);
-                    await this._diceRoll.rollRemainingDice();
+                    while(await askToRollDice(player.playerNumber)) {
+                        await this._diceRoll.rollRemainingDice();
+                        this._diceRoll.dice[0].value = 2;
+                        this._diceRoll.dice[1].value = 2;
+                        this._diceRoll.dice[2].value = 3;
+                        this._diceRoll.dice[3].value = 3;
+                        this._diceRoll.dice[4].value = 4;
+                        this._diceRoll.dice[5].value = 6;
+                        const matches = this._diceRoll.findScoreMatches(this._rules.scores);
+                        if (matches.length === 0) {
+                            await informOfBust();
+                            break;
+                        }
+                        // { dice: string, selectedDOM: [] }[]
+                        const selectedScores = askToScoreDice(this._diceRoll.dice);
+                        // TODO: Find score values and increment the player's score accordingly
+                        //       and also check if the dice they selected are valid. Probably need another loop here.
+                        //       Which means we are getting many nested levels deep here, probably time to refactor.
+                        //this._scoreRow.addScore(selectedScores.map(obj => obj.selectedDOM));
+                    }
                 }
                 else {
                     // TODO: This is just simulating each player taking 1 second on their turn.
@@ -85,7 +114,7 @@ function askHowManyPlayers() {
     }).then(result => Number(result.value));
 }
 
-function rollDicePrompt(playerNumber) {
+function askToRollDice(playerNumber) {
     return swal({
         title: `Player ${playerNumber}`,
         confirmButtonText: "Roll Dice"
@@ -101,4 +130,20 @@ function askToPlayAgain() {
         confirmButtonText: "Yes",
         cancelButtonText: "No"
     }).then(result => result.value ? true : false);
+}
+
+function informOfBust() {
+    return swal({
+        title: "Bust!",
+        type: "error",
+        showConfirmButton: false,
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        toast: true,
+        timer: 3000
+    });
+}
+
+function askToScoreDice(dice) {
+    return Promise.resolve(dice);
 }

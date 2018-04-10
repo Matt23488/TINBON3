@@ -5,6 +5,7 @@ export default class Die extends Component {
         super("die");
 
         super.appendTo(diceRollContainer);
+        this.scored = false;
     }
 
     set value(val) {
