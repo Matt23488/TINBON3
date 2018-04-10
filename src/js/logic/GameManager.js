@@ -15,7 +15,7 @@ export default class GameManager {
      */
     async loadRules() {
         if (!this._rules) {
-            this._rules = await fetch("/src/rules.json").then(r => r.json());
+            this._rules = await fetch("rules.json").then(r => r.json());
         }
     }
 
